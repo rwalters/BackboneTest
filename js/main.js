@@ -1,4 +1,5 @@
 require.config({
+    urlArgs: "bust=" + (new Date()).getTime(),
     paths: {
                 //tries to load jQuery from Google's CDN first and falls back
                 //to load locally
