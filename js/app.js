@@ -9,6 +9,33 @@ define(["backbone"], function(Backbone){
     }
   });
   var MimeTypes = Backbone.Collection.extend({
+    comparator: function(mimeType) {
+        return mimeType.get('type');
+    },
+    orderByType: function() {
+      this.comparator = function(mimeType) {
+        return mimeType.get('type');
+      }
+      this.sort();
+    },
+    orderByDescription: function() {
+      this.comparator = function(mimeType){
+        return mimeType.get('description');
+      };
+      this.sort();
+    },
+    orderByFileExtension: function() {
+      this.comparator = function(mimeType){
+        return mimeType.get('fileExtension');
+      };
+      this.sort();
+    },
+    orderBySupported: function() {
+      this.comparator = function(mimeType){
+        return mimeType.get('supported');
+      };
+      this.sort();
+    },
     parse: function(response){
       return response.mimeTypeFullList;
     },
@@ -36,12 +63,52 @@ define(["backbone"], function(Backbone){
 
   var App = function() {
     var mimeTypes = new MimeTypes;
-    var mimeTypesView = new MimeTypesView({collection: mimeTypes});
-    mimeTypes.fetch({
-      success : function(model, err) {
-        $('thead').after(mimeTypesView.render().el);
-      }
+    
+    $('#type').click(function(){ 
+      console.log("type");
+      mimeTypes.fetch({
+        success : function(model, err) {
+          mimeTypes.orderByType();
+          var mimeTypesView = new MimeTypesView({collection: mimeTypes});
+          $('thead').after(mimeTypesView.render().el);
+        }
+      });
     });
+    
+    $('#fileExtension').click(function(){
+      console.log("fileExtension");
+      mimeTypes.fetch({
+        success : function(model, err) {
+          mimeTypes.orderByFileExtension();
+          var mimeTypesView = new MimeTypesView({collection: mimeTypes});
+          $('thead').after(mimeTypesView.render().el);
+        }
+      });
+    });
+
+    $('#description').click(function(){
+      console.log("description");
+      mimeTypes.fetch({
+        success : function(model, err) {
+          mimeTypes.orderByDescription();
+          var mimeTypesView = new MimeTypesView({collection: mimeTypes});
+          $('thead').after(mimeTypesView.render().el);
+        }
+      });
+    });
+
+    $('#supported').click(function(){
+      console.log("supported");
+      mimeTypes.fetch({
+        success : function(model, err) {
+          mimeTypes.orderBySupported();
+          var mimeTypesView = new MimeTypesView({collection: mimeTypes});
+          $('thead').after(mimeTypesView.render().el);
+        }
+      });
+    });
+
+    $('#type').trigger('click');
   }
 
   return App;
