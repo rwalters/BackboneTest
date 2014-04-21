@@ -2,10 +2,17 @@
   <head>
     <meta charset="utf-8">
     <title>Backbone Example: Sorting Mime Types</title>
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/main.css">
     <script data-main="js/main" src="js/libs/requirejs/require.js"></script>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
   </head>
   <body>
     <p>Enjoy our listing of Mime Types below.</p>
-    <div id="app"></div>
+    <table class="table table-condensed">
+      <thead>
+        <tr><th>Type</th><th>File Extension</th><th>Description</th><th>Supported Format</th></tr>
+      </thead>
+    </table>
   </body>
 </html>

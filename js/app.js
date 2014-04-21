@@ -1,7 +1,8 @@
 define(["backbone"], function(Backbone){
   var MimeType = Backbone.Model.extend({ });
   var MimeTypeView = Backbone.View.extend({
-    template: _.template('<tr><td><%= type %></td><td><%= fileExtension %></td><td><%= description %></td><td><%= supported %></td></tr>'),
+    tagName: '<tr>',
+    template: _.template('<td><%= type %></td><td><%= fileExtension %></td><td><%= description %></td><td><%= supported %></td>'),
     render: function(){
       this.$el.html(this.template(this.model.attributes));
       return this;
@@ -15,6 +16,7 @@ define(["backbone"], function(Backbone){
     model: MimeType
   });
   var MimeTypesView = Backbone.View.extend({
+    tagName: '<tbody>',
     initialize: function(){
       this.collection.on('reset', this.render, this);
     },
@@ -23,9 +25,8 @@ define(["backbone"], function(Backbone){
       return this;
     },
     addAll: function(){
-      this.$el.html("<table><th><td>Type</td><td>File Extension</td><td>Description</td><td>Supported Format</td></th>");
+      this.$el.empty
       this.collection.forEach(this.addOne, this);
-      this.$el.append("</table>");
     },
     addOne: function(mimeType){
       var mimeTypeView = new MimeTypeView({model: mimeType});
@@ -38,7 +39,7 @@ define(["backbone"], function(Backbone){
     var mimeTypesView = new MimeTypesView({collection: mimeTypes});
     mimeTypes.fetch({
       success : function(model, err) {
-        $('#app').html(mimeTypesView.render().el);
+        $('thead').after(mimeTypesView.render().el);
       }
     });
   }
