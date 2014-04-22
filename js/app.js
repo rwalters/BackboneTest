@@ -51,7 +51,7 @@ define(["backbone"], function(Backbone){
     },
     addAll: function(){
       this.$el.empty
-      $('tbody').remove();
+      $(this.tagName).remove();
       this.collection.forEach(this.addOne, this);
     },
     addOne: function(mimeType){
@@ -63,19 +63,35 @@ define(["backbone"], function(Backbone){
   var App = function() {
     var mimeTypes = new MimeTypes;
     
-    $('#type').click(function(){ 
-      console.log("type");
+    var applications = new RegExp("^application/", "i");
+    var audios = new RegExp("^audio/", "i");
+    var images = new RegExp("^image/", "i");
+    var texts = new RegExp("^text/", "i");
+    var videos = new RegExp("^video/", "i");
+
+    $('#type').click(function(){
       mimeTypes.fetch({
         success : function(model, err) {
+          var appCount = mimeTypes.filter(function(data) { return applications.test(data.get("type")); }).length
+          var audioCount = mimeTypes.filter(function(data) { return audios.test(data.get("type")); }).length
+          var imageCount = mimeTypes.filter(function(data) { return images.test(data.get("type")); }).length
+          var textCount = mimeTypes.filter(function(data) { return texts.test(data.get("type")); }).length
+          var videoCount = mimeTypes.filter(function(data) { return videos.test(data.get("type")); }).length
+
+          $("#applications").html(appCount);
+          $("#audios").html(audioCount);
+          $("#images").html(imageCount);
+          $("#texts").html(textCount);
+          $("#videos").html(videoCount);
+
           mimeTypes.sortMimeTypes("type");
           var mimeTypesView = new MimeTypesView({collection: mimeTypes});
           $('table').append(mimeTypesView.render().el);
         }
       });
     });
-    
+
     $('#fileExtension').click(function(){
-      console.log("fileExtension");
       mimeTypes.fetch({
         success : function(model, err) {
           mimeTypes.sortMimeTypes("fileExtension");
@@ -86,7 +102,6 @@ define(["backbone"], function(Backbone){
     });
 
     $('#description').click(function(){
-      console.log("description");
       mimeTypes.fetch({
         success : function(model, err) {
           mimeTypes.sortMimeTypes("description");
@@ -97,7 +112,6 @@ define(["backbone"], function(Backbone){
     });
 
     $('#supported').click(function(){
-      console.log("supported");
       mimeTypes.fetch({
         success : function(model, err) {
           mimeTypes.sortMimeTypes("supported");
