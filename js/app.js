@@ -9,31 +9,29 @@ define(["backbone"], function(Backbone){
     }
   });
   var MimeTypes = Backbone.Collection.extend({
-    comparator: function(mimeType) {
-        return mimeType.get('type');
-    },
-    orderByType: function() {
-      this.comparator = function(mimeType) {
-        return mimeType.get('type');
+    sortAttribute: "",
+    defaultSortAttribute: "type",
+    sortDirection: 1,
+
+    comparator: function(a, b) {
+      var a = a.get(this.sortAttribute || this.defaultSortAttribute),
+          b = b.get(this.sortAttribute || this.defaultSortAttribute);
+
+      if (a == b) return 0;
+
+      if (this.sortDirection == 1) {
+        return a > b ? 1 : -1;
+      } else {
+        return a < b ? 1 : -1;
       }
-      this.sort();
     },
-    orderByDescription: function() {
-      this.comparator = function(mimeType){
-        return mimeType.get('description');
-      };
-      this.sort();
-    },
-    orderByFileExtension: function() {
-      this.comparator = function(mimeType){
-        return mimeType.get('fileExtension');
-      };
-      this.sort();
-    },
-    orderBySupported: function() {
-      this.comparator = function(mimeType){
-        return mimeType.get('supported');
-      };
+    sortMimeTypes: function (attr) {
+      if (this.sortAttribute == attr) {
+        this.sortDirection *= -1;
+      } else {
+        this.sortDirection = 1;
+        this.sortAttribute = attr;
+      }
       this.sort();
     },
     parse: function(response){
@@ -43,7 +41,7 @@ define(["backbone"], function(Backbone){
     model: MimeType
   });
   var MimeTypesView = Backbone.View.extend({
-    tagName: '<tbody>',
+    tagName: 'tbody',
     initialize: function(){
       this.collection.on('reset', this.render, this);
     },
@@ -53,6 +51,7 @@ define(["backbone"], function(Backbone){
     },
     addAll: function(){
       this.$el.empty
+      $('tbody').remove();
       this.collection.forEach(this.addOne, this);
     },
     addOne: function(mimeType){
@@ -68,9 +67,9 @@ define(["backbone"], function(Backbone){
       console.log("type");
       mimeTypes.fetch({
         success : function(model, err) {
-          mimeTypes.orderByType();
+          mimeTypes.sortMimeTypes("type");
           var mimeTypesView = new MimeTypesView({collection: mimeTypes});
-          $('thead').after(mimeTypesView.render().el);
+          $('table').append(mimeTypesView.render().el);
         }
       });
     });
@@ -79,9 +78,9 @@ define(["backbone"], function(Backbone){
       console.log("fileExtension");
       mimeTypes.fetch({
         success : function(model, err) {
-          mimeTypes.orderByFileExtension();
+          mimeTypes.sortMimeTypes("fileExtension");
           var mimeTypesView = new MimeTypesView({collection: mimeTypes});
-          $('thead').after(mimeTypesView.render().el);
+          $('table').append(mimeTypesView.render().el);
         }
       });
     });
@@ -90,9 +89,9 @@ define(["backbone"], function(Backbone){
       console.log("description");
       mimeTypes.fetch({
         success : function(model, err) {
-          mimeTypes.orderByDescription();
+          mimeTypes.sortMimeTypes("description");
           var mimeTypesView = new MimeTypesView({collection: mimeTypes});
-          $('thead').after(mimeTypesView.render().el);
+          $('table').append(mimeTypesView.render().el);
         }
       });
     });
@@ -101,9 +100,9 @@ define(["backbone"], function(Backbone){
       console.log("supported");
       mimeTypes.fetch({
         success : function(model, err) {
-          mimeTypes.orderBySupported();
+          mimeTypes.sortMimeTypes("supported");
           var mimeTypesView = new MimeTypesView({collection: mimeTypes});
-          $('thead').after(mimeTypesView.render().el);
+          $('table').append(mimeTypesView.render().el);
         }
       });
     });
